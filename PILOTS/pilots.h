@@ -344,9 +344,9 @@ namespace dll
 		}
 	};
 
-	template<typename T>concept primes = (std::is_same<char, T>::value() || std::is_same<wchar_t, T>::value()
-		|| std::is_same<int, T>::value(), std::is_same<float, T>::value() || std::is_same<double, T>::value()
-		|| std::is_same<long, T>::value());
+	template<typename T>concept primes = (std::is_same<char, T>::value || std::is_same<wchar_t, T>::value
+		|| std::is_same<int, T>::value, std::is_same<float, T>::value || std::is_same<double, T>::value
+		|| std::is_same<long, T>::value);
 
 	template<primes T> bool PrimeSort(BAG<T>& bag, bool ascending = true)
 	{
@@ -386,6 +386,7 @@ namespace dll
 		return true;
 	}
 
+	
 
 
 
@@ -397,4 +398,22 @@ namespace dll
 
 
 
+
+
+
+
+
+
+
+
+	//FUNCTIONS ********************************
+
+	float Distance(FPOINT first, FPOINT second);
+
+	bool SortBag(BAG<FPOINT>& Bag, FPOINT ref_point);
+	
+	bool Intersect(FRECT first, FRECT second);
+
+	bool Intersect(FPOINT center1, FPOINT center2, float radius1_x, float radius2_x,
+		float radius1_y, float radius2_y);
 }
