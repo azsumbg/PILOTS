@@ -215,8 +215,133 @@ namespace dll
 			}
 		}
 
+		void push_front(T element)
+		{
+			if (base_ptr)
+			{
+				if (next_pos == 0)
+				{
+					(*base_ptr) = element;
+					++next_pos;
+				}
+				else
+				{
+					if (next_pos + 1 <= max_size)
+					{
+						for (size t count = 0; count < next_pos; ++count)
+						{
+							T next_element{ base_ptr[count + 1] };
+							base_ptr[count + 1] = base_ptr[count];
+							if (count == 0)base_ptr[count] = element;
+						}
+						++next_pos;
+					}
+					else
+					{
+						++max_size;
+						++next_pos;
+						T* temp_ptr{ reinterpret_cast<T*>(realloc(base_ptr, sizeof(T) * max_size)) };
+						free(base_ptr);
+						if (temp_ptr)base_ptr = temp_ptr;
+						else throw EXCEPTION(BAG_BAD_PTR);
 
-		
+						for (size t count = 0; count < next_pos; ++count)
+						{
+							T next_element{ base_ptr[count + 1] };
+							base_ptr[count + 1] = base_ptr[count];
+							if (count == 0)base_ptr[count] = element;
+						}
+					}
+				}
+			}
+			else throw EXCEPTION(BAG_BAD_PTR);
+		}
+		void push_front(T* element)
+		{
+			if (base_ptr)
+			{
+				if (next_pos == 0)
+				{
+					(*base_ptr) = (*element);
+					++next_pos;
+				}
+				else
+				{
+					if (next_pos + 1 <= max_size)
+					{
+						for (size t count = 0; count < next_pos; ++count)
+						{
+							T next_element{ base_ptr[count + 1] };
+							base_ptr[count + 1] = base_ptr[count];
+							if (count == 0)base_ptr[count] = (*element);
+						}
+						++next_pos;
+					}
+					else
+					{
+						++max_size;
+						++next_pos;
+						T* temp_ptr{ reinterpret_cast<T*>(realloc(base_ptr, sizeof(T) * max_size)) };
+						free(base_ptr);
+						if (temp_ptr)base_ptr = temp_ptr;
+						else throw EXCEPTION(BAG_BAD_PTR);
+
+						for (size t count = 0; count < next_pos; ++count)
+						{
+							T next_element{ base_ptr[count + 1] };
+							base_ptr[count + 1] = base_ptr[count];
+							if (count == 0)base_ptr[count] = (*element);
+						}
+					}
+				}
+			}
+			else throw EXCEPTION(BAG_BAD_PTR);
+		}
+
+		void erase(size_t index)
+		{
+			if (index < 0 || index >= next_pos)throw EXCEPTION(BAG_BAD_INDEX);
+			if (!base_ptr)throw EXCEPTION(BAG_BAD_PTR);
+			else
+			{
+				for (size_t count = index; count < next_pos - 1; ++count)base_ptr[count] = base_ptr[count + 1];
+				next_pos--;
+			}
+		}
+
+		T& operator[] (size_t index)
+		{
+			if (index < 0 || index >= next_pos)throw EXCEPTION(BAG_BAD_INDEX);
+			if (!base_ptr)throw EXCEPTION(BAG_BAD_PTR);
+			
+			return base_ptr[index];
+		}
+
+		BAG& operator = (BAG& other)
+		{
+			if (this->base_ptr == other.base_ptr)throw EXCEPTION(BAG_BAD_ARG);
+
+			free(base_ptr);
+			base_ptr = other.base_ptr;
+			max_size = other.max_size;
+			next_pos = other.next_pos;
+
+			return (*this);
+		}
+		BAG& operator = (BAG&& other)
+		{
+			if (this->base_ptr == other.base_ptr)throw EXCEPTION(BAG_BAD_ARG);
+
+			free(base_ptr);
+
+			base_ptr = other.base_ptr;
+			max_size = other.max_size;
+			next_pos = other.next_pos;
+
+			other.base_ptr = nullptr;
+
+			return (*this);
+		}
 	};
 
 
