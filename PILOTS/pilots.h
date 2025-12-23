@@ -344,6 +344,57 @@ namespace dll
 		}
 	};
 
+	template<typename T>concept primes = (std::is_same<char, T>::value() || std::is_same<wchar_t, T>::value()
+		|| std::is_same<int, T>::value(), std::is_same<float, T>::value() || std::is_same<double, T>::value()
+		|| std::is_same<long, T>::value());
+
+	template<primes T> bool PrimeSort(BAG<T>& bag, bool ascending = true)
+	{
+		if (bag.size() < 2)return false;
+
+		bool is_ok = false;
+
+		while (!is_ok)
+		{
+			is_ok = true;
+
+			for (size_t count = 0; count < bag.size() - 1; ++count)
+			{
+				if (ascending)
+				{
+					if (bag[count] > bag[count + 1])
+					{
+						T temp{ bag[count] };
+						bag[count] = bag[count + 1];
+						bag[count + 1] = temp;
+						is_ok = false;
+					}
+				}
+				else
+				{
+					if (bag[count] < bag[count + 1])
+					{
+						T temp{ bag[count] };
+						bag[count] = bag[count + 1];
+						bag[count + 1] = temp;
+						is_ok = false;
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
+
+
+
+
+
+
+
+
+
 
 
 }
