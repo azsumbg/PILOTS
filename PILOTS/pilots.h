@@ -436,7 +436,23 @@ namespace dll
 		static TILE* create(float _first_x, float _first_y);
 	};
 
+	class PILOTS_API ASSETS :public PROTON
+	{
+	private:
+		float _speed{ 0 };
+		assets type{ assets::cloud1 };
 
+		ASSETS(assets _what, float _s_x, float _s_y);
+
+	public:
+		dirs dir{ dirs::stop };
+		
+		assets get_type() const;
+		void Release();
+		bool move(float gear);
+
+		static ASSETS* create(assets what_type, float where_x, float where_y);
+	};
 
 
 

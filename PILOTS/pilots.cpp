@@ -219,11 +219,117 @@ dll::TILE* dll::TILE::create(float _first_x, float _first_y)
 
 //////////////////////////////////////////
 
+// ASSETS CLASS **************************
 
+dll::ASSETS::ASSETS(assets _what, float _s_x, float _s_y) :PROTON(_s_x, _s_y)
+{
+	type = _what;
 
+	switch (type)
+	{
+	case assets::cloud1:
+		new_dims(100.0f, 53.0f);
+		_speed = 0.8f;
+		break;
 
+	case assets::cloud2:
+		new_dims(100.0f, 52.0f);
+		_speed = 0.7f;
+		break;
 
+	case assets::riff1:
+		new_dims(200.0f, 115.0f);
+		_speed = 0.5;
+		break;
 
+	case assets::riff2:
+		new_dims(200.0f, 112.0f);
+		_speed = 0.5;
+		break;
+
+	case assets::riff3:
+		new_dims(180.0f, 94.0f);
+		_speed = 0.5;
+		break;
+	}
+}
+
+assets dll::ASSETS::get_type() const
+{
+	return type;
+}
+void dll::ASSETS::Release()
+{
+	delete this;
+}
+bool dll::ASSETS::move(float gear)
+{
+	float my_speed = _speed + gear / 7.0f;
+
+	switch (dir)
+	{
+	case dirs::up:
+		start.y -= my_speed;
+		set_edges();
+		if (end.y < 0)return false;
+		break;
+
+	case dirs::down:
+		start.y += my_speed;
+		set_edges();
+		if (start.y > scr_height)return false;
+		break;
+
+	case dirs::left:
+		start.x -= my_speed;
+		set_edges();
+		if (end.x < -50.0f)return false;
+		break;
+
+	case dirs::right:
+		start.x += my_speed;
+		set_edges();
+		if (start.x > scr_width + 50.0f)return false;
+		break;
+
+	case dirs::up_left:
+		start.x -= my_speed;
+		start.y -= my_speed;
+		set_edges();
+		if (end.x < -50.0f || end.y < 0)return false;
+		break;
+
+	case dirs::up_right:
+		start.x += my_speed;
+		start.y -= my_speed;
+		set_edges();
+		if (start.x > scr_width + 50.0f || end.y < 0)return false;
+		break;
+
+	case dirs::down_left:
+		start.x -= my_speed;
+		start.y -= my_speed;
+		set_edges();
+		if (end.x < -50.0f || start.y > scr_height)return false;
+		break;
+
+	case dirs::down_right:
+		start.x += my_speed;
+		start.y -= my_speed;
+		set_edges();
+		if (start.x > scr_width + 50.0f || start.y > scr_height)return false;
+		break;
+	}
+
+	return true;
+}
+
+dll::ASSETS* dll::ASSETS::create(assets what_type, float where_x, float where_y)
+{
+	return new ASSETS(what_type, where_x, where_y);
+}
+
+/////////////////////////////////////////
 
 
 
