@@ -419,7 +419,22 @@ namespace dll
 		float get_height() const;
 	};
 
+	class PILOTS_API TILE :public PROTON
+	{
+	private:
+		float _speed{ 0.5f };
 
+		TILE(float _s_x, float _s_y);
+
+	public:
+		dirs dir{ dirs::stop };
+
+		bool move(float gear);
+
+		void Release();
+
+		static TILE* create(float _first_x, float _first_y);
+	};
 
 
 

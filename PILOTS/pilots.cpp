@@ -141,7 +141,83 @@ float dll::PROTON::get_height() const
 
 //////////////////////////////////////////
 
+// TILE CLASS ****************************
 
+dll::TILE::TILE(float _s_x, float _s_y) :PROTON(_s_x, _s_y, 50.0f, 50.0f) {};
+
+bool dll::TILE::move(float gear)
+{
+	float my_speed = _speed + gear / 7.0f;
+
+	switch (dir)
+	{
+	case dirs::up:
+		start.y -= my_speed;
+		set_edges();
+		if (start.y < 0)return false;
+		break;
+
+	case dirs::down:
+		start.y += my_speed;
+		set_edges();
+		if (end.y > scr_height)return false;
+		break;
+
+	case dirs::left:
+		start.x -= my_speed;
+		set_edges();
+		if (start.x < -50.0f)return false;
+		break;
+
+	case dirs::right:
+		start.x += my_speed;
+		set_edges();
+		if (end.x > scr_width + 50.0f)return false;
+		break;
+
+	case dirs::up_left:
+		start.x -= my_speed;
+		start.y -= my_speed;
+		set_edges();
+		if (start.x < -50.0f || start.y < 0)return false;
+		break;
+
+	case dirs::up_right:
+		start.x += my_speed;
+		start.y -= my_speed;
+		set_edges();
+		if (end.x > scr_width + 50.0f || start.y < 0)return false;
+		break;
+
+	case dirs::down_left:
+		start.x -= my_speed;
+		start.y -= my_speed;
+		set_edges();
+		if (start.x < -50.0f || end.y > scr_height)return false;
+		break;
+
+	case dirs::down_right:
+		start.x += my_speed;
+		start.y -= my_speed;
+		set_edges();
+		if (end.x > scr_width + 50.0f || end.y > scr_height)return false;
+		break;
+	}
+
+	return true;
+}
+
+void dll::TILE::Release()
+{
+	delete this;
+}
+
+dll::TILE* dll::TILE::create(float _first_x, float _first_y)
+{
+	return new TILE(_first_x, _first_y);
+}
+
+//////////////////////////////////////////
 
 
 
