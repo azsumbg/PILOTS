@@ -386,9 +386,38 @@ namespace dll
 		return true;
 	}
 
-	
+	/////////////////////////////////////////////////////
 
+	class PILOTS_API PROTON
+	{
+	protected:
+		float _width{ 0 };
+		float _height{ 0 };
+		bool in_heap{ false };
 
+	public:
+		FPOINT start{};
+		FPOINT end{};
+		FPOINT center{};
+		float radius_x{ 0 };
+		float radius_y{ 0 };
+
+		PROTON();
+		PROTON(float _sx, float _sy);
+		PROTON(float _sx, float _sy, float _s_width, float _s_height);
+
+		virtual ~PROTON();
+
+		static PROTON* create(float _start_x, float _start_y, float _start_width, float _start_height);
+
+		void set_edges();
+		void set_width(float new_width);
+		void set_height(float new_height);
+		void new_dims(float new_width, float new_height);
+
+		float get_width() const;
+		float get_height() const;
+	};
 
 
 
