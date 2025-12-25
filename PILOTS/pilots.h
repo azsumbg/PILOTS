@@ -86,6 +86,8 @@ namespace dll
 			case BAG_UNKNOWN_ERROR:
 				return unknown_err;
 			}
+
+			return unknown_err;
 		}
 
 	};
@@ -185,7 +187,7 @@ namespace dll
 				if (base_ptr)
 				{
 					++max_size;
-					T* temp_ptr{ reinterpret_cast<T*>(realloc(base_ptr,sizeof(T) * max_size)) }
+					T* temp_ptr{ reinterpret_cast<T*>(realloc(base_ptr,sizeof(T) * max_size)) };
 					if (temp_ptr)base_ptr = temp_ptr;
 					else return false;
 					base_ptr[next_pos] = element;
@@ -211,7 +213,7 @@ namespace dll
 				if (base_ptr)
 				{
 					++max_size;
-					T* temp_ptr{ reinterpret_cast<T*>(realloc(base_ptr,sizeof(T) * max_size)) }
+					T* temp_ptr{ reinterpret_cast<T*>(realloc(base_ptr,sizeof(T) * max_size)) };
 					if (temp_ptr)base_ptr = temp_ptr;
 					else return false;
 					base_ptr[next_pos] = (*element);
@@ -235,7 +237,7 @@ namespace dll
 				{
 					if (next_pos + 1 <= max_size)
 					{
-						for (size t count = 0; count < next_pos; ++count)
+						for (size_t count = 0; count < next_pos; ++count)
 						{
 							T next_element{ base_ptr[count + 1] };
 							base_ptr[count + 1] = base_ptr[count];
@@ -252,7 +254,7 @@ namespace dll
 						if (temp_ptr)base_ptr = temp_ptr;
 						else throw EXCEPTION(BAG_BAD_PTR);
 
-						for (size t count = 0; count < next_pos; ++count)
+						for (size_t count = 0; count < next_pos; ++count)
 						{
 							T next_element{ base_ptr[count + 1] };
 							base_ptr[count + 1] = base_ptr[count];
@@ -276,7 +278,7 @@ namespace dll
 				{
 					if (next_pos + 1 <= max_size)
 					{
-						for (size t count = 0; count < next_pos; ++count)
+						for (size_t count = 0; count < next_pos; ++count)
 						{
 							T next_element{ base_ptr[count + 1] };
 							base_ptr[count + 1] = base_ptr[count];
@@ -293,7 +295,7 @@ namespace dll
 						if (temp_ptr)base_ptr = temp_ptr;
 						else throw EXCEPTION(BAG_BAD_PTR);
 
-						for (size t count = 0; count < next_pos; ++count)
+						for (size_t count = 0; count < next_pos; ++count)
 						{
 							T next_element{ base_ptr[count + 1] };
 							base_ptr[count + 1] = base_ptr[count];
