@@ -24,7 +24,7 @@ enum class dirs { stop = 0, up = 1, down = 2, left = 3, right = 4, up_left = 5, 
 enum class planes { evil1 = 0, evil2 = 1, evil3 = 2, evil4 = 3, boss1 = 4, boss2 = 5, boss3 = 6 };
 enum class assets { cloud1 = 0, cloud2 = 1, riff1 = 2, riff2 = 3, riff3 = 4 };
 
-enum class actions { move = 0, shoot = 1, flee = 2 };
+enum class actions { move = 0, shoot = 1, flee = 2, need_order = 3 };
 
 struct FPOINT
 {
@@ -151,6 +151,12 @@ namespace dll
 		bool valid()const
 		{
 			if (base_ptr && is_valid)return true;
+
+			return false;
+		}
+		bool empty()const
+		{
+			if (next_pos == 0)return true;
 
 			return false;
 		}
@@ -545,12 +551,12 @@ namespace dll
 		
 		EVILS(planes _what, float _start_x, float _start_y);
 
-		void SetPathInfo(float to_x, float to_y);
-
 	public:
 		dirs dir{ dirs::stop };
 		int lifes{ 0 };
 		
+		void SetPathInfo(float to_x, float to_y);
+
 		void Release();
 
 		bool move(float gear);

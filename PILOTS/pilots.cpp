@@ -668,6 +668,7 @@ bool dll::EVILS::move(float gear)
 		if (move_sx < move_ex)
 		{
 			start.x += my_speed;
+			dir = dirs::right;
 			set_edges();
 			if (start.x > scr_width)return false;
 		}
@@ -675,6 +676,7 @@ bool dll::EVILS::move(float gear)
 		{
 			start.x -= my_speed;
 			set_edges();
+			dir = dirs::left;
 			if (end.x < 0)return false;
 		}
 		else return false;
@@ -685,12 +687,14 @@ bool dll::EVILS::move(float gear)
 		{
 			start.y += my_speed;
 			set_edges();
+			dir = dirs::down;
 			if (start.y > ground)return false;
 		}
 		else if (move_sy > move_ey)
 		{
 			start.y -= my_speed;
 			set_edges();
+			dir = dirs::up;
 			if (end.y < sky)return false;
 		}
 		else return false;
@@ -700,6 +704,8 @@ bool dll::EVILS::move(float gear)
 	{
 		start.x += my_speed;
 		start.y = start.x * slope + intercept;
+		if (start.y >= move_ey)dir = dirs::up_right;
+		else dir = dirs::down_right;
 		set_edges();
 		if (start.x > scr_width || start.y > ground || end.y > sky)return false;
 	}
@@ -707,6 +713,8 @@ bool dll::EVILS::move(float gear)
 	{
 		start.x -= my_speed;
 		start.y = start.x * slope + intercept;
+		if (start.y >= move_ey)dir = dirs::up_left;
+		else dir = dirs::down_left;
 		set_edges();
 		if (end.x < 0 || start.y > ground || end.y > sky)return false;
 	}
@@ -756,7 +764,82 @@ dll::EVILS* dll::EVILS::create(planes what, float start_x, float start_y)
 	return new EVILS(what, start_x, start_y);
 }
 
-actions AI_move(FPOINT hero_center, BAG<FPOINT>& EvilFleet, BAG<FPOINT>& Shots);
+actions dll::EVILS::AI_move(FPOINT hero_center, BAG<FPOINT>& EvilFleet, BAG<FPOINT>& Shots)
+{
+	if (_type != planes::boss1 && _type != planes::boss2 && _type != planes::boss3)
+	{
+		if (!EvilFleet.empty())SortBag(EvilFleet, center);
+		if (!Shots.empty())SortBag(EvilFleet, center);
+
+		if (Distance(center, hero_center) <= 200.0f)return actions::shoot;
+		else if (Distance(center, hero_center) <= 300.0f)
+		{
+			SetPathInfo(hero_center.x, hero_center.y);
+			return actions::move;
+		}
+		if (!EvilFleet.empty())
+		{
+			if (Distance(center, EvilFleet[0]) <= 110.0f)
+			{
+				if (center.x < EvilFleet[0].x)
+				{
+					if (center.y < EvilFleet[0].y)SetPathInfo(0, sky);
+					else if (center.y > EvilFleet[0].y)SetPathInfo(0, ground);
+					else SetPathInfo(0, center.y);
+				}
+				else if (center.x > EvilFleet[0].x)
+				{
+					if (center.y < EvilFleet[0].y)SetPathInfo(scr_width, sky);
+					else if (center.y > EvilFleet[0].y)SetPathInfo(scr_width, ground);
+					else SetPathInfo(scr_width, center.y);
+				}
+				else
+				{
+					if (center.y > EvilFleet[0].y)SetPathInfo(center.x, ground);
+					else SetPathInfo(center.x, sky);
+				}
+
+				return actions::move;
+			}
+		}
+		if (!Shots.empty())
+		{
+			if (Distance(center, Shots[0]) <= 50.0f)
+			{
+				if (center.x < Shots[0].x)
+				{
+					if (center.y < Shots[0].y)SetPathInfo(0, sky);
+					else if (center.y > Shots[0].y)SetPathInfo(0, ground);
+					else SetPathInfo(0, center.y);
+				}
+				else if (center.x > Shots[0].x)
+				{
+					if (center.y < Shots[0].y)SetPathInfo(scr_width, sky);
+					else if (center.y > Shots[0].y)SetPathInfo(scr_width, ground);
+					else SetPathInfo(scr_width, center.y);
+				}
+				else
+				{
+					if (center.y > Shots[0].y)SetPathInfo(center.x, ground);
+					else SetPathInfo(center.x, sky);
+				}
+
+				return actions::flee;
+			}
+		}
+
+		return actions::need_order;
+	}
+
+	if (Distance(center, hero_center) <= 200.0f)return actions::shoot;
+	else if (Distance(center, hero_center) <= 300.0f)
+	{
+		SetPathInfo(hero_center.x, hero_center.y);
+		return actions::move;
+	}
+
+	return actions::need_order;
+}
 
 ////////////////////////////////////////////
 
