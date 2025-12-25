@@ -487,7 +487,30 @@ namespace dll
 		static SHOT* create(float where_x, float where_y, float to_where_x, float to_where_y);
 	};
 
+	class PILOTS_API HERO :public PROTON
+	{
+	private:
+		float speed;
 
+		int max_frames{ 3 };
+		int frame_delay{ 20 };
+		int current_frame{ 0 };
+
+		int max_lifes{ 100 };
+
+	public:
+		dirs dir = dirs::stop;
+		int lifes{ 100 };
+
+		HERO(float sx, float sy);
+
+		void move(float gear = 1.0f);
+
+		void heal(int heal_points);
+
+		int get_frame();
+
+	};
 
 
 

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "pilots.h"
 
-// RANDIT **********************************
+// RANDIT CLASS **********************************
 
 dll::RANDIT::RANDIT()
 {
@@ -331,7 +331,7 @@ dll::ASSETS* dll::ASSETS::create(assets what_type, float where_x, float where_y)
 
 /////////////////////////////////////////
 
-// SHOTS CLASS **************************
+// SHOT CLASS **************************
 
 dll::SHOT::SHOT(float _where_x, float _where_y, float _to_where_x, float _to_where_y) :PROTON(_where_x, _where_y, 15.0f, 15.0f)
 {
@@ -439,6 +439,113 @@ dll::SHOT* dll::SHOT::create(float where_x, float where_y, float to_where_x, flo
 }
 
 ///////////////////////////////////////////////
+
+// HERO CLASS *********************************
+
+dll::HERO::HERO(float sx, float sy) :PROTON(sx, sy, 120.0f, 120.0f)
+{
+	speed = 1.5f;
+}
+
+void dll::HERO::move(float gear)
+{
+	float my_speed = speed + gear / 5.0f;
+
+	switch (dir)
+	{
+	case dirs::up_left:
+		if (start.x - my_speed >= 0 && start.y - my_speed >= sky)
+		{
+			start.x -= my_speed;
+			start.y -= my_speed;
+			set_edges();
+		}
+		break;
+
+	case dirs::up:
+		if (start.y - my_speed >= sky)
+		{
+			start.y -= my_speed;
+			set_edges();
+		}
+		break;
+
+	case dirs::up_right:
+		if (end.x + my_speed <= scr_width && start.y - my_speed >= sky)
+		{
+			start.x += my_speed;
+			start.y -= my_speed;
+			set_edges();
+		}
+		break;
+
+	case dirs::down_left:
+		if (start.x - my_speed >= 0 && end.y + my_speed <= ground)
+		{
+			start.x -= my_speed;
+			start.y += my_speed;
+			set_edges();
+		}
+		break;
+
+	case dirs::down:
+		if (end.y + my_speed <= ground)
+		{
+			start.y += my_speed;
+			set_edges();
+		}
+		break;
+
+	case dirs::down_right:
+		if (end.x + my_speed <= scr_width && end.y + my_speed <= ground)
+		{
+			start.x += my_speed;
+			start.y += my_speed;
+			set_edges();
+		}
+		break;
+
+	case dirs::right:
+		if (end.x + my_speed <= scr_width)
+		{
+			start.x += my_speed;
+			set_edges();
+		}
+		break;
+
+	case dirs::left:
+		if (start.x - my_speed >= 0)
+		{
+			start.x -= my_speed;
+			set_edges();
+		}
+		break;
+	}
+}
+
+void dll::HERO::heal(int heal_points)
+{
+	if (lifes + heal_points > max_lifes)lifes = max_lifes;
+	else lifes += heal_points;
+}
+
+int dll::HERO::get_frame()
+{
+	--frame_delay;
+	if (frame_delay < 0)
+	{
+		frame_delay = 20;
+		++current_frame;
+		if (current_frame >= max_frames)current_frame = 0;
+	}
+
+	return current_frame;
+}
+
+
+//////////////////////////////////////////////
+
+
 
 
 
