@@ -454,7 +454,38 @@ namespace dll
 		static ASSETS* create(assets what_type, float where_x, float where_y);
 	};
 
+	class PILOTS_API SHOT :public PROTON
+	{
+	private:
+		float _speed = 3.0f;
+		int current_frame = 0;
 
+		bool hor_dir{ false };
+		bool ver_dir{ false };
+
+		float move_sx{ 0 };
+		float move_ex{ 0 };
+
+		float move_sy{ 0 };
+		float move_ey{ 0 };
+
+		float slope{ 0 };
+		float intercept{ 0 };
+
+		SHOT(float _where_x, float _where_y, float _to_where_x, float _to_where_y);
+
+		void SetPathInfo(float to_x, float to_y);
+
+	public:
+
+		void Release();
+
+		bool Move(float gear);
+
+		int get_frame();
+
+		static SHOT* create(float where_x, float where_y, float to_where_x, float to_where_y);
+	};
 
 
 

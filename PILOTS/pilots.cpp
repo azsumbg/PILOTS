@@ -331,9 +331,114 @@ dll::ASSETS* dll::ASSETS::create(assets what_type, float where_x, float where_y)
 
 /////////////////////////////////////////
 
+// SHOTS CLASS **************************
+
+dll::SHOT::SHOT(float _where_x, float _where_y, float _to_where_x, float _to_where_y) :PROTON(_where_x, _where_y, 15.0f, 15.0f)
+{
+	SetPathInfo(_to_where_x, _to_where_y);
+}
+
+void dll::SHOT::SHOT::Release()
+{
+	delete this;
+}
+
+void dll::SHOT::SetPathInfo(float to_x, float to_y)
+{
+	ver_dir = false;
+	hor_dir = false;
+
+	move_sx = start.x;
+	move_sy = start.y;
+
+	move_ex = end.x;
+	move_ey = end.y;
+
+	if (move_ex == move_sx || (move_ex > start.x && move_ex < end.x))
+	{
+		ver_dir = true;
+		return;
+	}
+	if (move_ey == move_sy || (move_ey > start.y && move_ey < end.y))
+	{
+		hor_dir = true;
+		return;
+	}
+
+	slope = (move_ey - move_sy) / (move_ex - move_sx);
+	intercept = start.y - slope * start.x;
+}
+
+int dll::SHOT::get_frame()
+{
+	current_frame++;
+	if (current_frame > 63)current_frame = 0;
+	return current_frame;
+}
+
+bool dll::SHOT::Move(float gear)
+{
+	float my_speed = _speed + gear / 2.0f;
+
+	if (hor_dir)
+	{
+		if (move_sx < move_ex)
+		{
+			start.x += my_speed;
+			set_edges();
+			if (start.x > scr_width)return false;
+		}
+		else if (move_sx > move_ex)
+		{
+			start.x -= my_speed;
+			set_edges();
+			if (end.x < 0)return false;
+		}
+		else return false;
+	}
+	if (ver_dir)
+	{
+		if (move_sy < move_ey)
+		{
+			start.y += my_speed;
+			set_edges();
+			if (start.y > ground)return false;
+		}
+		else if (move_sy > move_ey)
+		{
+			start.y -= my_speed;
+			set_edges();
+			if (end.y < sky)return false;
+		}
+		else return false;
+	}
+
+	if (move_sx < move_ex)
+	{
+		start.x += my_speed;
+		start.y = start.x * slope + intercept;
+		set_edges();
+		if (start.x > scr_width || start.y > ground || end.y > sky)return false;
+	}
+	else if (move_sx > move_ex)
+	{
+		start.x -= my_speed;
+		start.y = start.x * slope + intercept;
+		set_edges();
+		if (end.x < 0 || start.y > ground || end.y > sky)return false;
+	}
+	else return false;
 
 
+	return true;
+}
 
+dll::SHOT* dll::SHOT::create(float where_x, float where_y, float to_where_x, float to_where_y)
+{
+	return new SHOT(where_x, where_y, to_where_x, to_where_y);
+}
+
+///////////////////////////////////////////////
 
 
 
