@@ -21,8 +21,10 @@ constexpr float sky{ 50.0f };
 constexpr float ground{ 750.0f };
 
 enum class dirs { stop = 0, up = 1, down = 2, left = 3, right = 4, up_left = 5, up_right = 6, down_left = 7, down_right = 8 };
-enum class planes { evil1 = 0, evil2 = 1, evil3 = 2, evil4 = 3, hero = 4, boss1 = 5, boss2 = 6, boss3 = 7 };
+enum class planes { evil1 = 0, evil2 = 1, evil3 = 2, evil4 = 3, boss1 = 4, boss2 = 5, boss3 = 6 };
 enum class assets { cloud1 = 0, cloud2 = 1, riff1 = 2, riff2 = 3, riff3 = 4 };
+
+enum class actions { move = 0, shoot = 1, flee = 2 };
 
 struct FPOINT
 {
@@ -36,7 +38,6 @@ struct FRECT
 	float right{ 0 };
 	float down{ 0 };
 };
-
 
 namespace dll
 {
@@ -512,13 +513,60 @@ namespace dll
 
 	};
 
+	class PILOTS_API EVILS :public PROTON
+	{
+	private:
+		bool hor_dir{ false };
+		bool ver_dir{ false };
 
+		float move_sx{ 0 };
+		float move_ex{ 0 };
 
+		float move_sy{ 0 };
+		float move_ey{ 0 };
 
+		float slope{ 0 };
+		float intercept{ 0 };
 
+		int max_lifes{ 0 };
 
+		float speed{ 0 };
 
+		int current_frame{ 0 };
+		int frame_delay{ 0 };
+		int max_frame_delay{ 0 };
+		int max_frames{ 0 };
 
+		int strenght{ 0 };
+		int attack_delay{ 0 };
+		int max_attack_delay{ 0 };
+
+		planes _type;
+		
+		EVILS(planes _what, float _start_x, float _start_y);
+
+		void SetPathInfo(float to_x, float to_y);
+
+	public:
+		dirs dir{ dirs::stop };
+		int lifes{ 0 };
+		
+		void Release();
+
+		bool move(float gear);
+
+		planes get_type()const;
+
+		int get_frame();
+
+		void heal(int heal_points);
+
+		int attack();
+
+		static EVILS* create(planes what, float start_x, float start_y);
+
+		actions AI_move(FPOINT hero_center, BAG<FPOINT>& EvilFleet, BAG<FPOINT>& Shots);
+	};
 
 	//FUNCTIONS ********************************
 

@@ -351,8 +351,8 @@ void dll::SHOT::SetPathInfo(float to_x, float to_y)
 	move_sx = start.x;
 	move_sy = start.y;
 
-	move_ex = end.x;
-	move_ey = end.y;
+	move_ex = to_x;
+	move_ey = to_y;
 
 	if (move_ex == move_sx || (move_ex > start.x && move_ex < end.x))
 	{
@@ -542,13 +542,223 @@ int dll::HERO::get_frame()
 	return current_frame;
 }
 
-
 //////////////////////////////////////////////
 
+// EVILS CLASS ******************************
 
+dll::EVILS::EVILS(planes _what, float _start_x, float _start_y)
+{
+	_type = _what;
 
+	switch (_type)
+	{
+	case planes::evil1:
+		new_dims(50.0f, 53.0f);
+		strenght = 20;
+		lifes = 50;
+		speed = 0.7f;
+		max_frames = 12;
+		frame_delay = 6;
+		attack_delay = 50;
+		break;
 
+	case planes::evil2:
+		new_dims(45.0f, 31.0f);
+		strenght = 15;
+		lifes = 40;
+		speed = 0.9f;
+		max_frames = 24;
+		frame_delay = 3;
+		attack_delay = 40;
+		break;
 
+	case planes::evil3:
+		new_dims(55.0f, 49.0f);
+		strenght = 22;
+		lifes = 60;
+		speed = 0.6f;
+		max_frames = 24;
+		frame_delay = 3;
+		attack_delay = 45;
+		break;
+
+	case planes::evil4:
+		new_dims(55.0f, 51.0f);
+		strenght = 18;
+		lifes = 55;
+		speed = 0.5f;
+		max_frames = 24;
+		frame_delay = 3;
+		attack_delay = 55;
+		break;
+
+	case planes::boss1:
+		new_dims(200.0f, 67.0f);
+		strenght = 35;
+		lifes = 800;
+		speed = 0.4f;
+		max_frames = 4;
+		frame_delay = 17;
+		attack_delay = 80;
+		break;
+
+	case planes::boss2:
+		new_dims(200.0f, 143.0f);
+		strenght = 45;
+		lifes = 1000;
+		speed = 0.3f;
+		max_frames = 2;
+		frame_delay = 30;
+		attack_delay = 150;
+		break;
+
+	case planes::boss3:
+		new_dims(250.0f, 118.0f);
+		strenght = 40;
+		lifes = 1100;
+		speed = 0.2f;
+		max_frames = 10;
+		frame_delay = 6;
+		attack_delay = 180;
+		break;
+	}
+
+	max_lifes = lifes;
+	max_attack_delay = attack_delay;
+	max_frame_delay = frame_delay;
+}
+
+void dll::EVILS::SetPathInfo(float to_x, float to_y)
+{
+	ver_dir = false;
+	hor_dir = false;
+
+	move_sx = start.x;
+	move_sy = start.y;
+
+	move_ex = to_x;
+	move_ey = to_y;
+
+	if (move_ex == move_sx || (move_ex > start.x && move_ex < end.x))
+	{
+		ver_dir = true;
+		return;
+	}
+	if (move_ey == move_sy || (move_ey > start.y && move_ey < end.y))
+	{
+		hor_dir = true;
+		return;
+	}
+
+	slope = (move_ey - move_sy) / (move_ex - move_sx);
+	intercept = start.y - slope * start.x;
+}
+
+void dll::EVILS::Release()
+{
+	delete this;
+}
+
+bool dll::EVILS::move(float gear)
+{
+	float my_speed = speed + gear / 10.0f;
+
+	if (hor_dir)
+	{
+		if (move_sx < move_ex)
+		{
+			start.x += my_speed;
+			set_edges();
+			if (start.x > scr_width)return false;
+		}
+		else if (move_sx > move_ex)
+		{
+			start.x -= my_speed;
+			set_edges();
+			if (end.x < 0)return false;
+		}
+		else return false;
+	}
+	if (ver_dir)
+	{
+		if (move_sy < move_ey)
+		{
+			start.y += my_speed;
+			set_edges();
+			if (start.y > ground)return false;
+		}
+		else if (move_sy > move_ey)
+		{
+			start.y -= my_speed;
+			set_edges();
+			if (end.y < sky)return false;
+		}
+		else return false;
+	}
+
+	if (move_sx < move_ex)
+	{
+		start.x += my_speed;
+		start.y = start.x * slope + intercept;
+		set_edges();
+		if (start.x > scr_width || start.y > ground || end.y > sky)return false;
+	}
+	else if (move_sx > move_ex)
+	{
+		start.x -= my_speed;
+		start.y = start.x * slope + intercept;
+		set_edges();
+		if (end.x < 0 || start.y > ground || end.y > sky)return false;
+	}
+	else return false;
+
+	return true;
+}
+
+planes dll::EVILS::get_type()const
+{
+	return _type;
+}
+
+int dll::EVILS::get_frame()
+{
+	--frame_delay;
+	if (frame_delay < 0)
+	{
+		frame_delay = max_frame_delay;
+		++current_frame;
+		if (current_frame >= max_frames)current_frame = 0;
+	}
+
+	return current_frame;
+}
+
+void dll::EVILS::heal(int heal_points)
+{
+	if (lifes + heal_points > max_lifes)lifes = max_lifes;
+	else lifes += heal_points;
+}
+
+int dll::EVILS::attack()
+{
+	--attack_delay;
+	if (attack_delay < 0)
+	{
+		attack_delay = max_attack_delay;
+		return strenght;
+	}
+
+	return 0;
+}
+
+dll::EVILS* dll::EVILS::create(planes what, float start_x, float start_y)
+{
+	return new EVILS(what, start_x, start_y);
+}
+
+actions AI_move(FPOINT hero_center, BAG<FPOINT>& EvilFleet, BAG<FPOINT>& Shots);
+
+////////////////////////////////////////////
 
 // FUNCTIONS ******************************
 
