@@ -431,14 +431,15 @@ namespace dll
 	class PILOTS_API TILE :public PROTON
 	{
 	private:
-		float _speed{ 0.5f };
+		float my_speed{ 1.0f };
 
 		TILE(float _s_x, float _s_y);
 
 	public:
 		dirs dir{ dirs::stop };
+		bool to_erase = false;
 
-		bool move(float gear);
+		bool move();
 
 		void Release();
 
@@ -486,6 +487,7 @@ namespace dll
 		void SetPathInfo(float to_x, float to_y);
 
 	public:
+		int strenght = 0;
 
 		void Release();
 
@@ -578,12 +580,12 @@ namespace dll
 
 	//FUNCTIONS ********************************
 
-	float Distance(FPOINT first, FPOINT second);
+	float PILOTS_API Distance(FPOINT first, FPOINT second);
 
-	bool SortBag(BAG<FPOINT>& Bag, FPOINT ref_point);
+	bool PILOTS_API SortBag(BAG<FPOINT>& Bag, FPOINT ref_point);
 	
-	bool Intersect(FRECT first, FRECT second);
+	bool PILOTS_API Intersect(FRECT first, FRECT second);
 
-	bool Intersect(FPOINT center1, FPOINT center2, float radius1_x, float radius2_x,
+	bool PILOTS_API Intersect(FPOINT center1, FPOINT center2, float radius1_x, float radius2_x,
 		float radius1_y, float radius2_y);
 }
