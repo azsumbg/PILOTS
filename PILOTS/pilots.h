@@ -189,7 +189,7 @@ namespace dll
 					++max_size;
 					T* temp_ptr{ reinterpret_cast<T*>(realloc(base_ptr,sizeof(T) * max_size)) };
 					if (temp_ptr)base_ptr = temp_ptr;
-					else return false;
+					else throw EXCEPTION(BAG_BAD_PTR);
 					base_ptr[next_pos] = element;
 					++next_pos;
 					is_valid = true;
@@ -215,7 +215,7 @@ namespace dll
 					++max_size;
 					T* temp_ptr{ reinterpret_cast<T*>(realloc(base_ptr,sizeof(T) * max_size)) };
 					if (temp_ptr)base_ptr = temp_ptr;
-					else return false;
+					else throw EXCEPTION(BAG_BAD_PTR);
 					base_ptr[next_pos] = (*element);
 					++next_pos;
 					is_valid = true;

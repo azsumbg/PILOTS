@@ -388,9 +388,8 @@ bool dll::SHOT::Move(float gear)
 			set_edges();
 			if (end.x < 0)return false;
 		}
-		else return false;
 	}
-	if (ver_dir)
+	else if (ver_dir)
 	{
 		if (move_sy < move_ey)
 		{
@@ -404,25 +403,24 @@ bool dll::SHOT::Move(float gear)
 			set_edges();
 			if (end.y < sky)return false;
 		}
-		else return false;
 	}
-
-	if (move_sx < move_ex)
+	else
 	{
-		start.x += my_speed;
-		start.y = start.x * slope + intercept;
-		set_edges();
-		if (start.x > scr_width || start.y > ground || end.y > sky)return false;
+		if (move_sx < move_ex)
+		{
+			start.x += my_speed;
+			start.y = start.x * slope + intercept;
+			set_edges();
+			if (start.x > scr_width || start.y > ground || end.y < sky)return false;
+		}
+		else if (move_sx > move_ex)
+		{
+			start.x -= my_speed;
+			start.y = start.x * slope + intercept;
+			set_edges();
+			if (end.x < 0 || start.y > ground || end.y < sky)return false;
+		}
 	}
-	else if (move_sx > move_ex)
-	{
-		start.x -= my_speed;
-		start.y = start.x * slope + intercept;
-		set_edges();
-		if (end.x < 0 || start.y > ground || end.y > sky)return false;
-	}
-	else return false;
-
 
 	return true;
 }
@@ -664,18 +662,17 @@ bool dll::EVILS::move(float gear)
 			start.x += my_speed;
 			dir = dirs::right;
 			set_edges();
-			if (start.x > scr_width)return false;
+			if (start.x > scr_width + 200.0f)return false;
 		}
 		else if (move_sx > move_ex)
 		{
 			start.x -= my_speed;
 			set_edges();
 			dir = dirs::left;
-			if (end.x < 0)return false;
+			if (end.x < -200.0f)return false;
 		}
-		else return false;
 	}
-	if (ver_dir)
+	else if (ver_dir)
 	{
 		if (move_sy < move_ey)
 		{
@@ -691,28 +688,29 @@ bool dll::EVILS::move(float gear)
 			dir = dirs::up;
 			if (end.y < sky)return false;
 		}
-		else return false;
 	}
+	else
+	{
+		if (move_sx < move_ex)
+		{
+			start.x += my_speed;
+			start.y = start.x * slope + intercept;
+			if (start.y >= move_ey)dir = dirs::up_right;
+			else dir = dirs::down_right;
+			set_edges();
+			if (start.x > scr_width + 200.0f || start.y > ground || end.y < sky)return false;
+		}
+		else if (move_sx > move_ex)
+		{
+			start.x -= my_speed;
+			start.y = start.x * slope + intercept;
+			if (start.y >= move_ey)dir = dirs::up_left;
+			else dir = dirs::down_left;
+			set_edges();
+			if (end.x < -200.0f || start.y > ground || end.y < sky)return false;
+		}
 
-	if (move_sx < move_ex)
-	{
-		start.x += my_speed;
-		start.y = start.x * slope + intercept;
-		if (start.y >= move_ey)dir = dirs::up_right;
-		else dir = dirs::down_right;
-		set_edges();
-		if (start.x > scr_width || start.y > ground || end.y > sky)return false;
 	}
-	else if (move_sx > move_ex)
-	{
-		start.x -= my_speed;
-		start.y = start.x * slope + intercept;
-		if (start.y >= move_ey)dir = dirs::up_left;
-		else dir = dirs::down_left;
-		set_edges();
-		if (end.x < 0 || start.y > ground || end.y > sky)return false;
-	}
-	else return false;
 
 	return true;
 }
