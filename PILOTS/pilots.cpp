@@ -538,7 +538,7 @@ int dll::HERO::get_frame()
 
 // EVILS CLASS ******************************
 
-dll::EVILS::EVILS(planes _what, float _start_x, float _start_y)
+dll::EVILS::EVILS(planes _what, float _start_x, float _start_y) :PROTON(_start_x, _start_y)
 {
 	_type = _what;
 
@@ -686,7 +686,7 @@ bool dll::EVILS::move(float gear)
 			start.y -= my_speed;
 			set_edges();
 			dir = dirs::up;
-			if (end.y < sky)return false;
+			if (end.y < -100.0f)return false;
 		}
 	}
 	else
@@ -698,7 +698,7 @@ bool dll::EVILS::move(float gear)
 			if (start.y >= move_ey)dir = dirs::up_right;
 			else dir = dirs::down_right;
 			set_edges();
-			if (start.x > scr_width + 200.0f || start.y > ground || end.y < sky)return false;
+			if (start.x > scr_width + 200.0f || start.y > ground || end.y < -100.0f)return false;
 		}
 		else if (move_sx > move_ex)
 		{
@@ -707,9 +707,8 @@ bool dll::EVILS::move(float gear)
 			if (start.y >= move_ey)dir = dirs::up_left;
 			else dir = dirs::down_left;
 			set_edges();
-			if (end.x < -200.0f || start.y > ground || end.y < sky)return false;
+			if (end.x < -200.0f || start.y > ground || end.y < -100.0f)return false;
 		}
-
 	}
 
 	return true;
@@ -775,20 +774,20 @@ actions dll::EVILS::AI_move(FPOINT hero_center, BAG<FPOINT>& EvilFleet, BAG<FPOI
 			{
 				if (center.x < EvilFleet[0].x)
 				{
-					if (center.y < EvilFleet[0].y)SetPathInfo(0, sky);
-					else if (center.y > EvilFleet[0].y)SetPathInfo(0, ground);
-					else SetPathInfo(0, center.y);
+					if (center.y < EvilFleet[0].y)SetPathInfo(EvilFleet[0].x - 50.0f, sky);
+					else if (center.y > EvilFleet[0].y)SetPathInfo(EvilFleet[0].x - 50.0f, ground);
+					else SetPathInfo(EvilFleet[0].x - 50.0f, center.y);
 				}
 				else if (center.x > EvilFleet[0].x)
 				{
-					if (center.y < EvilFleet[0].y)SetPathInfo(scr_width, sky);
-					else if (center.y > EvilFleet[0].y)SetPathInfo(scr_width, ground);
+					if (center.y < EvilFleet[0].y)SetPathInfo(EvilFleet[0].x + 50.0f, sky);
+					else if (center.y > EvilFleet[0].y)SetPathInfo(EvilFleet[0].x + 50.0f, ground);
 					else SetPathInfo(scr_width, center.y);
 				}
 				else
 				{
 					if (center.y > EvilFleet[0].y)SetPathInfo(center.x, ground);
-					else SetPathInfo(center.x, sky);
+					else if (center.y < EvilFleet[0].y)SetPathInfo(center.x, sky);
 				}
 
 				return actions::move;
@@ -820,7 +819,7 @@ actions dll::EVILS::AI_move(FPOINT hero_center, BAG<FPOINT>& EvilFleet, BAG<FPOI
 			}
 		}
 
-		return actions::need_order;
+		return actions::move;
 	}
 
 	if (Distance(center, hero_center) <= 200.0f)return actions::shoot;
@@ -830,7 +829,7 @@ actions dll::EVILS::AI_move(FPOINT hero_center, BAG<FPOINT>& EvilFleet, BAG<FPOI
 		return actions::move;
 	}
 
-	return actions::need_order;
+	return actions::move;
 }
 
 ////////////////////////////////////////////
