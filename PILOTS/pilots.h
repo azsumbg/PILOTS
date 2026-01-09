@@ -415,7 +415,7 @@ namespace dll
 		PROTON(float _sx, float _sy);
 		PROTON(float _sx, float _sy, float _s_width, float _s_height);
 
-		virtual ~PROTON();
+		virtual ~PROTON() {};
 
 		static PROTON* create(float _start_x, float _start_y, float _start_width, float _start_height);
 
@@ -423,6 +423,7 @@ namespace dll
 		void set_width(float new_width);
 		void set_height(float new_height);
 		void new_dims(float new_width, float new_height);
+		void Release();
 
 		float get_width() const;
 		float get_height() const;

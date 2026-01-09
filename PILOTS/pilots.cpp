@@ -75,7 +75,7 @@ dll::PROTON::PROTON(float _sx, float _sy, float _s_width, float _s_height)
 	radius_y = _height / 2.0f;
 }
 
-dll::PROTON::~PROTON()
+void dll::PROTON::Release()
 {
 	if (in_heap)delete this;
 }
@@ -546,7 +546,7 @@ dll::EVILS::EVILS(planes _what, float _start_x, float _start_y) :PROTON(_start_x
 	{
 	case planes::evil1:
 		new_dims(50.0f, 53.0f);
-		strenght = 20;
+		strenght = 10;
 		lifes = 50;
 		speed = 0.7f;
 		max_frames = 12;
@@ -556,7 +556,7 @@ dll::EVILS::EVILS(planes _what, float _start_x, float _start_y) :PROTON(_start_x
 
 	case planes::evil2:
 		new_dims(45.0f, 31.0f);
-		strenght = 15;
+		strenght = 8;
 		lifes = 40;
 		speed = 0.9f;
 		max_frames = 24;
@@ -566,7 +566,7 @@ dll::EVILS::EVILS(planes _what, float _start_x, float _start_y) :PROTON(_start_x
 
 	case planes::evil3:
 		new_dims(55.0f, 49.0f);
-		strenght = 22;
+		strenght = 11;
 		lifes = 60;
 		speed = 0.6f;
 		max_frames = 24;
@@ -576,7 +576,7 @@ dll::EVILS::EVILS(planes _what, float _start_x, float _start_y) :PROTON(_start_x
 
 	case planes::evil4:
 		new_dims(55.0f, 51.0f);
-		strenght = 18;
+		strenght = 9;
 		lifes = 55;
 		speed = 0.5f;
 		max_frames = 24;
@@ -586,7 +586,7 @@ dll::EVILS::EVILS(planes _what, float _start_x, float _start_y) :PROTON(_start_x
 
 	case planes::boss1:
 		new_dims(200.0f, 67.0f);
-		strenght = 35;
+		strenght = 18;
 		lifes = 800;
 		speed = 0.4f;
 		max_frames = 4;
@@ -596,7 +596,7 @@ dll::EVILS::EVILS(planes _what, float _start_x, float _start_y) :PROTON(_start_x
 
 	case planes::boss2:
 		new_dims(200.0f, 143.0f);
-		strenght = 45;
+		strenght = 22;
 		lifes = 1000;
 		speed = 0.3f;
 		max_frames = 2;
@@ -606,7 +606,7 @@ dll::EVILS::EVILS(planes _what, float _start_x, float _start_y) :PROTON(_start_x
 
 	case planes::boss3:
 		new_dims(250.0f, 118.0f);
-		strenght = 40;
+		strenght = 20;
 		lifes = 1100;
 		speed = 0.2f;
 		max_frames = 10;
@@ -823,7 +823,7 @@ actions dll::EVILS::AI_move(FPOINT hero_center, BAG<FPOINT>& EvilFleet, BAG<FPOI
 	}
 
 	if (Distance(center, hero_center) <= 200.0f)return actions::shoot;
-	else if (Distance(center, hero_center) <= 300.0f)
+	else
 	{
 		SetPathInfo(hero_center.x, hero_center.y);
 		return actions::move;
